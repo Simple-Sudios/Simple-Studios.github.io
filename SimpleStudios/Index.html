@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Studios | Premium Roblox Development Studio</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#FF3B30',
+                            redHover: '#E02D23',
+                            redSoft: 'rgba(255, 59, 48, 0.08)',
+                            dark: '#0F172A',
+                            darkSecondary: '#1E293B',
+                            slate: '#475569',
+                            muted: '#64748B',
+                            bg: '#FFFFFF',
+                            surface: '#F8FAFC',
+                            card: '#FFFFFF',
+                            border: '#E2E8F0'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'glow-red': '0 10px 30px -5px rgba(255, 59, 48, 0.25)',
+                        'soft-xl': '0 20px 40px -15px rgba(15, 23, 42, 0.07)',
+                        'card-hover': '0 25px 50px -12px rgba(255, 59, 48, 0.15)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FFFFFF;
+            color: #0F172A;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .text-gradient-red {
+            background: linear-gradient(135deg, #FF3B30 0%, #D90429 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bg-gradient-red {
+            background: linear-gradient(135deg, #FF3B30 0%, #E02D23 100%);
+        }
+
+        .glass-header {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.05);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card-shadow:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -10px rgba(255, 59, 48, 0.14);
+            border-color: rgba(255, 59, 48, 0.3);
+        }
+
+        /* Hover micro-interactions */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-8px) scale(1.015);
+            box-shadow: 0 20px 35px -10px rgba(255, 59, 48, 0.18);
+            border-color: rgba(255, 59, 48, 0.4);
+        }
+
+        .icon-pulse {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .group:hover .icon-pulse {
+            transform: scale(1.18) rotate(6deg);
+        }
+
+        /* Custom Floating Roblox Button Animation */
+        @keyframes subtlePulseRing {
+            0% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.25); opacity: 0; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+        .animate-pulse-ring {
+            animation: subtlePulseRing 2.5s infinite;
+        }
+
+        .roblox-btn-wrapper {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+        }
+        .roblox-btn-wrapper:hover {
+            transform: scale(1.18) translateY(-4px);
+            box-shadow: 0 15px 35px -5px rgba(255, 59, 48, 0.5);
+        }
+
+        .roblox-icon-spin {
+            transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .roblox-btn-wrapper:hover .roblox-icon-spin {
+            transform: rotate(360deg) scale(1.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F8FAFC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF3B30;
+        }
+
+        .toast-enter {
+            transform: translateY(100%);
+            opacity: 0;
+            transition: all 0.4s ease-out;
+        }
+        .toast-show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-red selection:text-white">
+
+    <!-- NAVIGATION HEADER -->
+    <header class="sticky top-0 z-40 w-full glass-header transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo & Brand -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <div class="relative w-11 h-11 rounded-2xl overflow-hidden p-[2px] bg-gradient-to-tr from-brand-red to-rose-400 transition-transform duration-300 group-hover:scale-105 shadow-sm">
+                        <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center overflow-hidden">
+                            <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793193279/images_1.png" 
+                                 alt="Simple Studios Logo" 
+                                 class="w-full h-full object-cover"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/FF3B30/ffffff?text=SS';">
+                        </div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-heading font-extrabold text-2xl tracking-tight text-brand-dark flex items-center gap-1.5">
+                            SIMPLE <span class="text-gradient-red">STUDIOS</span>
+                        </span>
+                        <span class="text-[10px] text-brand-muted font-bold tracking-widest uppercase -mt-1">Roblox Creative Lab</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-brand-slate">
+                    <a href="#about" class="hover:text-brand-red transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-red hover:after:w-full after:transition-all">About Us</a>
+                    <a href="#games" class="hover:text-brand-red transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-red hover:after:w-full after:transition-all">Popular Games</a>
+                    <a href="#capabilities" class="hover:text-brand-red transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-red hover:after:w-full after:transition-all">Capabilities</a>
+                    <a href="#journey" class="hover:text-brand-red transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-red hover:after:w-full after:transition-all">Our Journey</a>
+                    <a href="#why-us" class="hover:text-brand-red transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-red hover:after:w-full after:transition-all">Why Simple</a>
+                    <a href="#contact" class="hover:text-brand-red transition-colors py-1 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-brand-red hover:after:w-full after:transition-all">Contact</a>
+                </nav>
+
+                <!-- Action CTA -->
+                <div class="hidden sm:flex items-center gap-4">
+                    <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="px-6 py-2.5 rounded-xl bg-brand-dark text-white font-bold text-sm hover:bg-brand-red transition-all shadow-md hover:shadow-glow-red active:scale-95 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-xs"></i>
+                        <span>Join Our Community</span>
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Trigger -->
+                <button id="mobile-menu-btn" aria-label="Toggle Menu" class="md:hidden text-brand-dark hover:text-brand-red p-2">
+                    <i class="fa-solid fa-bars-staggered text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-brand-border bg-white px-4 py-6 shadow-xl space-y-4">
+            <a href="#about" class="block text-brand-dark font-semibold py-2 border-b border-slate-100">About Us</a>
+            <a href="#games" class="block text-brand-dark font-semibold py-2 border-b border-slate-100">Popular Games</a>
+            <a href="#capabilities" class="block text-brand-dark font-semibold py-2 border-b border-slate-100">Capabilities</a>
+            <a href="#journey" class="block text-brand-dark font-semibold py-2 border-b border-slate-100">Our Journey</a>
+            <a href="#why-us" class="block text-brand-dark font-semibold py-2 border-b border-slate-100">Why Simple</a>
+            <a href="#contact" class="block text-brand-dark font-semibold py-2 border-b border-slate-100">Contact</a>
+            <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="block w-full text-center py-3 rounded-xl bg-gradient-red text-white font-bold">
+                Join Community on Roblox
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-12 pb-20 lg:pt-24 lg:pb-32 overflow-hidden bg-gradient-to-b from-rose-50/50 via-white to-white">
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-brand-red/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-10 left-10 w-80 h-80 bg-rose-200/20 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                
+                <!-- Hero Left Column -->
+                <div class="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
+                    
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-redSoft border border-brand-red/20 text-xs font-bold text-brand-red mb-6 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-brand-red animate-pulse"></span>
+                        <span>INNOVATIVE ROBLOX CREATIVE STUDIO</span>
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                    </div>
+
+                    <h1 class="font-heading text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-brand-dark tracking-tight leading-[1.1] mb-6">
+                        Crafting Next-Gen <br class="hidden sm:inline"/>
+                        <span class="text-gradient-red">Immersive Roblox</span> Experiences
+                    </h1>
+
+                    <p class="text-lg sm:text-xl text-brand-slate font-normal leading-relaxed mb-8 max-w-2xl">
+                        At <strong class="text-brand-dark font-bold">Simple Studios</strong>, we blend high-performance Luau programming, custom 3D art, and seamless UI design to push the creative boundaries of the metaverse.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-10">
+                        <a href="#about" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-red text-white font-bold text-base shadow-glow-red hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center gap-3">
+                            <span>Explore Our Vision</span>
+                            <i class="fa-solid fa-arrow-right text-sm"></i>
+                        </a>
+                        <a href="#contact" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-brand-dark font-bold text-base border border-brand-border hover:bg-brand-surface transition-all text-center">
+                            Get in Touch
+                        </a>
+                    </div>
+
+                    <!-- Trust Stats Mini Pills -->
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-5 pt-6 border-t border-slate-200/80 w-full">
+                        <div class="flex items-center gap-2 text-xs font-semibold text-brand-slate">
+                            <i class="fa-solid fa-circle-check text-brand-red"></i>
+                            <span>Modular Luau Architecture</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-brand-slate">
+                            <i class="fa-solid fa-circle-check text-brand-red"></i>
+                            <span>AAA Visual Standards</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs font-semibold text-brand-slate">
+                            <i class="fa-solid fa-circle-check text-brand-red"></i>
+                            <span>Player-First Experience</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Hero Right Interactive Studio Card -->
+                <div class="lg:col-span-5 relative">
+                    <div class="relative mx-auto max-w-md lg:max-w-none">
+                        
+                        <div class="absolute -inset-4 bg-gradient-to-r from-brand-red/20 to-rose-300/30 rounded-3xl blur-2xl"></div>
+
+                        <div class="relative bg-white rounded-3xl p-8 border border-slate-200 shadow-soft-xl">
+                            
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-2xl bg-brand-surface border border-slate-200 p-1 flex items-center justify-center">
+                                        <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793193279/images_1.png" 
+                                             alt="Simple Studios Icon" 
+                                             class="w-full h-full object-cover rounded-xl"
+                                             onerror="this.onerror=null; this.src='https://placehold.co/100x100/FF3B30/ffffff?text=SS';">
+                                    </div>
+                                    <div>
+                                        <h3 class="font-heading font-extrabold text-base text-brand-dark">Simple Studios</h3>
+                                        <p class="text-xs font-semibold text-brand-red">Independent Roblox Studio</p>
+                                    </div>
+                                </div>
+                                <span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-200">
+                                    Active Studio
+                                </span>
+                            </div>
+
+                            <!-- Showcase Metrics Inside Card -->
+                            <div class="space-y-4">
+                                <div class="p-4 rounded-2xl bg-brand-surface border border-slate-200/60 flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-brand-redSoft text-brand-red flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-microchip text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-heading font-bold text-sm text-brand-dark">Server-Authoritative Logic</h4>
+                                        <p class="text-xs text-brand-muted">Secure, lag-compensated network events.</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-2xl bg-brand-surface border border-slate-200/60 flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-layer-group text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-heading font-bold text-sm text-brand-dark">Tailored Asset Pipeline</h4>
+                                        <p class="text-xs text-brand-muted">Optimized geometry for smooth FPS playback.</p>
+                                    </div>
+                                </div>
+
+                                <div class="p-4 rounded-2xl bg-brand-surface border border-slate-200/60 flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-gamepad text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-heading font-bold text-sm text-brand-dark">Multi-Device Readiness</h4>
+                                        <p class="text-xs text-brand-muted">Flawless design for PC, Mobile, and Console.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-brand-muted">
+                                <span>Engineered for scale</span>
+                                <span class="font-bold text-brand-dark flex items-center gap-1">
+                                    <i class="fa-solid fa-heart text-brand-red"></i> Powered by Luau
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- METRICS & KEY STATS BANNER -->
+    <section class="py-12 bg-white border-y border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                
+                <div class="flex flex-col items-center">
+                    <span class="font-heading font-black text-4xl sm:text-5xl text-brand-dark tracking-tight mb-1">
+                        +<span class="count-up" data-target="50">0</span>M
+                    </span>
+                    <span class="text-xs sm:text-sm font-semibold text-brand-slate">Total Gameplay Sessions</span>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <span class="font-heading font-black text-4xl sm:text-5xl text-brand-red tracking-tight mb-1">
+                        <span class="count-up" data-target="99">0</span>.8%
+                    </span>
+                    <span class="text-xs sm:text-sm font-semibold text-brand-slate">Code Efficiency Score</span>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <span class="font-heading font-black text-4xl sm:text-5xl text-brand-dark tracking-tight mb-1">
+                        +<span class="count-up" data-target="150">0</span>K
+                    </span>
+                    <span class="text-xs sm:text-sm font-semibold text-brand-slate">Global Community Members</span>
+                </div>
+
+                <div class="flex flex-col items-center">
+                    <span class="font-heading font-black text-4xl sm:text-5xl text-brand-red tracking-tight mb-1">
+                        +<span class="count-up" data-target="5">0</span> Yrs
+                    </span>
+                    <span class="text-xs sm:text-sm font-semibold text-brand-slate">Active Platform Experience</span>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- POPULAR GAMES SECTION -->
+    <section id="games" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-redSoft border border-brand-red/20 text-xs font-bold text-brand-red mb-3">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <span>TOP PERFORMING EXPERIENCES</span>
+                </div>
+                <h2 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-brand-dark tracking-tight">
+                    Our Popular Roblox Games
+                </h2>
+                <p class="mt-4 text-brand-slate text-base sm:text-lg">
+                    Immerse yourself in our community favorites crafted with high-end physics, custom modeling, and engaging gameplay loops.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                
+                <!-- Game 1: Create A Dinosaur -->
+                <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 hover-lift group flex flex-col justify-between shadow-soft-xl">
+                    <div>
+                        <!-- Game Thumbnail Header -->
+                        <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
+                            <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793194955/Gemini_Generated_Image_324gru324gru324g.jpg" 
+                                 alt="Create A Dinosaur Game" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/800x450/FF3B30/ffffff?text=Create+A+Dinosaur';">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            
+                            <!-- Badges -->
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                <span class="px-3 py-1 rounded-full bg-emerald-500/90 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 shadow-md">
+                                    <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                                    <span>24.5K Playing Now</span>
+                                </span>
+                            </div>
+
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 text-xs font-bold border border-amber-400/30 flex items-center gap-1">
+                                    <i class="fa-solid fa-thumbs-up"></i> 96% Approval
+                                </span>
+                            </div>
+
+                            <!-- Title Overlay -->
+                            <div class="absolute bottom-4 left-6 right-6">
+                                <h3 class="font-heading text-2xl sm:text-3xl font-black text-white drop-shadow-md">
+                                    Create A Dinosaur
+                                </h3>
+                                <p class="text-xs font-semibold text-slate-300 flex items-center gap-2 mt-1">
+                                    <span>Prehistoric Simulator & Building</span>
+                                    <span>•</span>
+                                    <span class="text-brand-red font-bold">Simple Studios Original</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Game Content & Description -->
+                        <div class="p-6 sm:p-8 space-y-6">
+                            <p class="text-brand-slate text-sm sm:text-base leading-relaxed">
+                                Design, customize, and hatch your very own custom prehistoric creatures! Explore vast ancient habitats, upgrade genetic traits, survive against rival apex predators, and build the ultimate dinosaur sanctuary with your friends.
+                            </p>
+
+                            <!-- Game Metrics Grid -->
+                            <div class="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-brand-surface border border-slate-200/80 text-center">
+                                <div>
+                                    <span class="text-[11px] font-bold text-brand-muted uppercase block">Total Visits</span>
+                                    <span class="font-heading font-extrabold text-lg text-brand-dark">28.4M+</span>
+                                </div>
+                                <div class="border-x border-slate-200/80">
+                                    <span class="text-[11px] font-bold text-brand-muted uppercase block">Favorites</span>
+                                    <span class="font-heading font-extrabold text-lg text-brand-red">410K+</span>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] font-bold text-brand-muted uppercase block">Genre</span>
+                                    <span class="font-heading font-extrabold text-lg text-brand-dark">RPG / Sim</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action CTA -->
+                    <div class="p-6 sm:p-8 pt-0">
+                        <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 rounded-xl bg-gradient-red text-white font-bold text-sm shadow-glow-red hover:shadow-lg transition-all flex items-center justify-center gap-2 group-hover:bg-brand-redHover">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>Play Create A Dinosaur on Roblox</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Game 2: Tame The Dragon -->
+                <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 hover-lift group flex flex-col justify-between shadow-soft-xl">
+                    <div>
+                        <!-- Game Thumbnail Header -->
+                        <div class="relative aspect-video w-full overflow-hidden bg-slate-900">
+                            <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793195248/Gemini_Generated_Image_5u9jle5u9jle5u9j.jpg" 
+                                 alt="Tame The Dragon Game" 
+                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/800x450/FF3B30/ffffff?text=Tame+The+Dragon';">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                            
+                            <!-- Badges -->
+                            <div class="absolute top-4 left-4 flex gap-2">
+                                <span class="px-3 py-1 rounded-full bg-emerald-500/90 backdrop-blur-md text-white text-xs font-bold flex items-center gap-1.5 shadow-md">
+                                    <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                                    <span>18.9K Playing Now</span>
+                                </span>
+                            </div>
+
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-amber-300 text-xs font-bold border border-amber-400/30 flex items-center gap-1">
+                                    <i class="fa-solid fa-thumbs-up"></i> 98% Approval
+                                </span>
+                            </div>
+
+                            <!-- Title Overlay -->
+                            <div class="absolute bottom-4 left-6 right-6">
+                                <h3 class="font-heading text-2xl sm:text-3xl font-black text-white drop-shadow-md">
+                                    Tame The Dragon
+                                </h3>
+                                <p class="text-xs font-semibold text-slate-300 flex items-center gap-2 mt-1">
+                                    <span>Fantasy Adventure & Flight</span>
+                                    <span>•</span>
+                                    <span class="text-brand-red font-bold">Simple Studios Original</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Game Content & Description -->
+                        <div class="p-6 sm:p-8 space-y-6">
+                            <p class="text-brand-slate text-sm sm:text-base leading-relaxed">
+                                Journey across mythical floating islands to discover wild elemental dragons. Master flight physics, feed and bond with legendary beasts, engage in aerial dragon battles, and unlock rare mythical evolutions!
+                            </p>
+
+                            <!-- Game Metrics Grid -->
+                            <div class="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-brand-surface border border-slate-200/80 text-center">
+                                <div>
+                                    <span class="text-[11px] font-bold text-brand-muted uppercase block">Total Visits</span>
+                                    <span class="font-heading font-extrabold text-lg text-brand-dark">21.8M+</span>
+                                </div>
+                                <div class="border-x border-slate-200/80">
+                                    <span class="text-[11px] font-bold text-brand-muted uppercase block">Favorites</span>
+                                    <span class="font-heading font-extrabold text-lg text-brand-red">350K+</span>
+                                </div>
+                                <div>
+                                    <span class="text-[11px] font-bold text-brand-muted uppercase block">Genre</span>
+                                    <span class="font-heading font-extrabold text-lg text-brand-dark">Adventure</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action CTA -->
+                    <div class="p-6 sm:p-8 pt-0">
+                        <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="w-full py-3.5 rounded-xl bg-gradient-red text-white font-bold text-sm shadow-glow-red hover:shadow-lg transition-all flex items-center justify-center gap-2 group-hover:bg-brand-redHover">
+                            <i class="fa-solid fa-play text-xs"></i>
+                            <span>Play Tame The Dragon on Roblox</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section id="about" class="py-24 bg-brand-surface relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-5 order-2 lg:order-1">
+                    <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-soft-xl relative">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-redSoft border border-brand-red/20 flex items-center justify-center text-brand-red text-2xl mb-6">
+                            <i class="fa-solid fa-compass-drafting"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-2xl text-brand-dark mb-4">
+                            Driven by Simplicity & Scale
+                        </h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Our studio name reflects our core philosophy: stripping away unnecessary friction to build clean, elegant, and highly scalable virtual experiences on Roblox.
+                        </p>
+                        
+                        <div class="space-y-3 border-t border-slate-100 pt-5">
+                            <div class="flex items-center gap-3 text-xs font-bold text-brand-dark">
+                                <div class="w-2 h-2 rounded-full bg-brand-red"></div>
+                                <span>Zero-compromise performance benchmarking</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs font-bold text-brand-dark">
+                                <div class="w-2 h-2 rounded-full bg-brand-red"></div>
+                                <span>Custom component-driven UI systems</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs font-bold text-brand-dark">
+                                <div class="w-2 h-2 rounded-full bg-brand-red"></div>
+                                <span>Community feedback integrated in live ops</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 order-1 lg:order-2">
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-red mb-3 block">Discover Simple Studios</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-brand-dark tracking-tight mb-6">
+                        Building the Next Generation of Roblox Content
+                    </h2>
+                    <div class="space-y-4 text-brand-slate text-base leading-relaxed">
+                        <p>
+                            Founded by experienced Roblox creators, <strong class="text-brand-dark">Simple Studios</strong> operates as an agile development group specializing in technical innovation, custom world design, and player engagement.
+                        </p>
+                        <p>
+                            We believe that creating memorable experiences requires more than just building models; it demands a deep understanding of platform infrastructure, network optimization, intuitive user interfaces, and engaging gameplay loops.
+                        </p>
+                        <p>
+                            Whether refining internal frameworks or architecting immersive worlds, our goal remains constant: elevate the quality standard of Roblox experiences for players worldwide.
+                        </p>
+                    </div>
+
+                    <div class="mt-8 flex items-center gap-6">
+                        <div class="flex items-center gap-3">
+                            <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793193279/images_1.png" 
+                                 alt="Simple Studios Badge" 
+                                 class="w-10 h-10 rounded-xl object-cover bg-white border border-slate-200 p-0.5"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/100x100/FF3B30/ffffff?text=SS';">
+                            <div>
+                                <span class="font-heading font-extrabold text-sm text-brand-dark block">Simple Studios Core Team</span>
+                                <span class="text-xs text-brand-muted">Platform Creators & Developers</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CORE CAPABILITIES / SERVICES SECTION -->
+    <section id="capabilities" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-brand-red mb-3 block">Technical Disciplines</span>
+                <h2 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-brand-dark tracking-tight">
+                    What We Craft at Simple Studios
+                </h2>
+                <p class="mt-4 text-brand-slate text-base sm:text-lg">
+                    Comprehensive game production capabilities optimized specifically for the Roblox Engine.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Craft 1 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 hover-lift group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-redSoft text-brand-red flex items-center justify-center text-2xl mb-6 icon-pulse">
+                            <i class="fa-solid fa-code"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-3 group-hover:text-brand-red transition-colors">Systems Architecture (Luau)</h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Modular OOP scripting, custom framework integrations, robust DataStore handling, and lag-compensated networking algorithms.
+                        </p>
+                    </div>
+                    <ul class="space-y-2 text-xs font-semibold text-brand-dark pt-4 border-t border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Strict Type Checking</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Secure Server Replication</li>
+                    </ul>
+                </div>
+
+                <!-- Craft 2 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 hover-lift group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-6 icon-pulse">
+                            <i class="fa-solid fa-cubes"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-3 group-hover:text-brand-red transition-colors">Environmental & 3D Art</h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Custom Blender assets, PBR texturing, low-poly environmental modeling, and optimized collision geometry.
+                        </p>
+                    </div>
+                    <ul class="space-y-2 text-xs font-semibold text-brand-dark pt-4 border-t border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Low Poly Count & Mesh Budgeting</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Atmosphere & Dynamic Lighting</li>
+                    </ul>
+                </div>
+
+                <!-- Craft 3 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 hover-lift group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl mb-6 icon-pulse">
+                            <i class="fa-solid fa-bezier-curve"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-3 group-hover:text-brand-red transition-colors">Immersive UI / UX Design</h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Ergonomic, modern graphic interfaces designed with device-agnostic layouts that fit Mobile, PC, and Console screens.
+                        </p>
+                    </div>
+                    <ul class="space-y-2 text-xs font-semibold text-brand-dark pt-4 border-t border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Fluid Tween Animations</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Accessible Navigation Design</li>
+                    </ul>
+                </div>
+
+                <!-- Craft 4 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 hover-lift group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-6 icon-pulse">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-3 group-hover:text-brand-red transition-colors">Game Economy & Retention</h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Balancing reward structures, engagement loops, progression mechanics, and analytics-driven content tuning.
+                        </p>
+                    </div>
+                    <ul class="space-y-2 text-xs font-semibold text-brand-dark pt-4 border-t border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Data-Driven Balance Adjustments</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Daily Retention Mechanics</li>
+                    </ul>
+                </div>
+
+                <!-- Craft 5 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 hover-lift group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-redSoft text-brand-red flex items-center justify-center text-2xl mb-6 icon-pulse">
+                            <i class="fa-solid fa-person-running"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-3 group-hover:text-brand-red transition-colors">Character & VFX Animation</h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Dynamic R15/R6 keyframe animations, combat systems, movement physics, and eye-catching particle effects.
+                        </p>
+                    </div>
+                    <ul class="space-y-2 text-xs font-semibold text-brand-dark pt-4 border-t border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Expressive Combat & Emotes</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Custom Emitter FX Systems</li>
+                    </ul>
+                </div>
+
+                <!-- Craft 6 -->
+                <div class="bg-white rounded-3xl p-8 border border-slate-200 hover-lift group flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl mb-6 icon-pulse">
+                            <i class="fa-solid fa-gauge-high"></i>
+                        </div>
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-3 group-hover:text-brand-red transition-colors">QA & Live Operations</h3>
+                        <p class="text-brand-slate text-sm leading-relaxed mb-6">
+                            Rigorous stress testing, memory leak diagnostics, continuous bug patching, and scheduled seasonal content rollouts.
+                        </p>
+                    </div>
+                    <ul class="space-y-2 text-xs font-semibold text-brand-dark pt-4 border-t border-slate-100">
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> 60 FPS Target Guarantee</li>
+                        <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-red"></i> Continuous Community Ops</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- OUR JOURNEY / TIMELINE SECTION -->
+    <section id="journey" class="py-24 bg-brand-surface border-y border-slate-200/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-widest text-brand-red mb-3 block">Evolution & Milestones</span>
+                <h2 class="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-brand-dark tracking-tight">
+                    Our Development Journey
+                </h2>
+                <p class="mt-4 text-brand-slate text-base sm:text-lg">
+                    A timeline of growth, technical breakthroughs, and platform milestones.
+                </p>
+            </div>
+
+            <div class="max-w-4xl mx-auto relative before:absolute before:inset-0 before:left-1/2 before:-translate-x-1/2 before:w-1 before:bg-slate-200 hidden md:block">
+                
+                <!-- Timeline Item 1 -->
+                <div class="relative flex items-center justify-between mb-12">
+                    <div class="w-5/12 text-right pr-8">
+                        <span class="text-xs font-extrabold text-brand-red uppercase tracking-wider">Phase 1</span>
+                        <h4 class="font-heading font-extrabold text-lg text-brand-dark">Studio Foundation</h4>
+                        <p class="text-xs text-brand-slate mt-1">Simple Studios was established with a focus on core Luau engineering and modular game design.</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-brand-red text-white font-extrabold flex items-center justify-center z-10 shadow-glow-red text-xs">
+                        01
+                    </div>
+                    <div class="w-5/12 pl-8"></div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div class="relative flex items-center justify-between mb-12">
+                    <div class="w-5/12 text-right pr-8"></div>
+                    <div class="w-10 h-10 rounded-full bg-brand-dark text-white font-extrabold flex items-center justify-center z-10 text-xs shadow-md">
+                        02
+                    </div>
+                    <div class="w-5/12 pl-8">
+                        <span class="text-xs font-extrabold text-brand-red uppercase tracking-wider">Phase 2</span>
+                        <h4 class="font-heading font-extrabold text-lg text-brand-dark">Framework Standardization</h4>
+                        <p class="text-xs text-brand-slate mt-1">Developed internal proprietary frameworks for zero-latency network events and UI management.</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 3 -->
+                <div class="relative flex items-center justify-between mb-12">
+                    <div class="w-5/12 text-right pr-8">
+                        <span class="text-xs font-extrabold text-brand-red uppercase tracking-wider">Phase 3</span>
+                        <h4 class="font-heading font-extrabold text-lg text-brand-dark">3D Asset Pipeline Expansion</h4>
+                        <p class="text-xs text-brand-slate mt-1">Expanded in-house Blender modeling capabilities for custom environments and stylized characters.</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-brand-dark text-white font-extrabold flex items-center justify-center z-10 text-xs shadow-md">
+                        03
+                    </div>
+                    <div class="w-5/12 pl-8"></div>
+                </div>
+
+                <!-- Timeline Item 4 -->
+                <div class="relative flex items-center justify-between">
+                    <div class="w-5/12 text-right pr-8"></div>
+                    <div class="w-10 h-10 rounded-full bg-brand-red text-white font-extrabold flex items-center justify-center z-10 shadow-glow-red text-xs">
+                        04
+                    </div>
+                    <div class="w-5/12 pl-8">
+                        <span class="text-xs font-extrabold text-brand-red uppercase tracking-wider">Present & Future</span>
+                        <h4 class="font-heading font-extrabold text-lg text-brand-dark">Community & Live Operations</h4>
+                        <p class="text-xs text-brand-slate mt-1">Continuously innovating new Roblox experiences backed by an active global community.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Mobile Timeline Fallback -->
+            <div class="space-y-6 md:hidden">
+                <div class="p-6 rounded-2xl bg-white border border-slate-200">
+                    <span class="text-xs font-bold text-brand-red uppercase">Phase 1</span>
+                    <h4 class="font-heading font-extrabold text-base text-brand-dark">Studio Foundation</h4>
+                    <p class="text-xs text-brand-slate mt-1">Established studio with focus on Luau modular game design.</p>
+                </div>
+                <div class="p-6 rounded-2xl bg-white border border-slate-200">
+                    <span class="text-xs font-bold text-brand-red uppercase">Phase 2</span>
+                    <h4 class="font-heading font-extrabold text-base text-brand-dark">Framework Standardization</h4>
+                    <p class="text-xs text-brand-slate mt-1">Built proprietary frameworks for networking and UI logic.</p>
+                </div>
+                <div class="p-6 rounded-2xl bg-white border border-slate-200">
+                    <span class="text-xs font-bold text-brand-red uppercase">Phase 3</span>
+                    <h4 class="font-heading font-extrabold text-base text-brand-dark">Asset Pipeline Expansion</h4>
+                    <p class="text-xs text-brand-slate mt-1">Expanded custom 3D environmental & character workflows.</p>
+                </div>
+                <div class="p-6 rounded-2xl bg-white border border-slate-200">
+                    <span class="text-xs font-bold text-brand-red uppercase">Present & Future</span>
+                    <h4 class="font-heading font-extrabold text-base text-brand-dark">Community Live Ops</h4>
+                    <p class="text-xs text-brand-slate mt-1">Continuously creating top-tier experiences for Roblox players.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE SIMPLE STUDIOS -->
+    <section id="why-us" class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                
+                <div class="lg:col-span-6">
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-red mb-3 block">Why Simple Studios</span>
+                    <h2 class="font-heading text-3xl sm:text-4xl font-black text-brand-dark tracking-tight mb-6">
+                        Engineered for Visual & Technical Excellence
+                    </h2>
+                    <p class="text-brand-slate text-base leading-relaxed mb-8">
+                        We approach Roblox development with the precision of traditional indie game studios, combining art and engineering into seamless virtual worlds.
+                    </p>
+
+                    <div class="space-y-6">
+                        <div class="flex gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors duration-300 group">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-surface border border-slate-200 text-brand-red flex items-center justify-center shrink-0 shadow-sm icon-pulse group-hover:bg-brand-redSoft">
+                                <i class="fa-solid fa-bolt text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-extrabold text-base text-brand-dark group-hover:text-brand-red transition-colors">Performance-First Mentality</h4>
+                                <p class="text-sm text-brand-slate mt-1">Every script is benchmarked to eliminate memory leaks and guarantee smooth 60 FPS gameplay.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors duration-300 group">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-surface border border-slate-200 text-brand-red flex items-center justify-center shrink-0 shadow-sm icon-pulse group-hover:bg-brand-redSoft">
+                                <i class="fa-solid fa-paintbrush text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-extrabold text-base text-brand-dark group-hover:text-brand-red transition-colors">Distinctive Art Direction</h4>
+                                <p class="text-sm text-brand-slate mt-1">Original 3D models and lighting setups designed to make environments instantly recognizable.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-colors duration-300 group">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-surface border border-slate-200 text-brand-red flex items-center justify-center shrink-0 shadow-sm icon-pulse group-hover:bg-brand-redSoft">
+                                <i class="fa-solid fa-comments text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-heading font-extrabold text-base text-brand-dark group-hover:text-brand-red transition-colors">Transparent Community Focus</h4>
+                                <p class="text-sm text-brand-slate mt-1">Active communication with players through Discord, devlogs, and community updates.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Visual Box -->
+                <div class="lg:col-span-6">
+                    <div class="bg-gradient-to-b from-rose-50 to-white rounded-3xl p-8 border border-slate-200 shadow-soft-xl">
+                        <h3 class="font-heading font-extrabold text-xl text-brand-dark mb-6 border-b border-slate-100 pb-4">
+                            Our Pillars of Development
+                        </h3>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 bg-white rounded-2xl border border-slate-200 hover-lift group">
+                                <div class="text-brand-red text-xl mb-2 icon-pulse"><i class="fa-solid fa-shield"></i></div>
+                                <h5 class="font-heading font-bold text-sm text-brand-dark group-hover:text-brand-red transition-colors">Code Stability</h5>
+                                <p class="text-xs text-brand-muted mt-1">Strict server checks to prevent exploits.</p>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-slate-200 hover-lift group">
+                                <div class="text-brand-red text-xl mb-2 icon-pulse"><i class="fa-solid fa-mobile-screen"></i></div>
+                                <h5 class="font-heading font-bold text-sm text-brand-dark group-hover:text-brand-red transition-colors">Cross-Platform</h5>
+                                <p class="text-xs text-brand-muted mt-1">Tested on Mobile, Tablet & PC.</p>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-slate-200 hover-lift group">
+                                <div class="text-brand-red text-xl mb-2 icon-pulse"><i class="fa-solid fa-feather"></i></div>
+                                <h5 class="font-heading font-bold text-sm text-brand-dark group-hover:text-brand-red transition-colors">Lightweight Assets</h5>
+                                <p class="text-xs text-brand-muted mt-1">Fast loading times worldwide.</p>
+                            </div>
+                            <div class="p-4 bg-white rounded-2xl border border-slate-200 hover-lift group">
+                                <div class="text-brand-red text-xl mb-2 icon-pulse"><i class="fa-solid fa-heart-pulse"></i></div>
+                                <h5 class="font-heading font-bold text-sm text-brand-dark group-hover:text-brand-red transition-colors">LiveOps</h5>
+                                <p class="text-xs text-brand-muted mt-1">Consistent content patches.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 p-4 rounded-2xl bg-brand-dark text-white flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793193279/images_1.png" 
+                                     alt="Simple Studios Badge Small" 
+                                     class="w-8 h-8 rounded-lg object-cover bg-white p-0.5"
+                                     onerror="this.onerror=null; this.src='https://placehold.co/100x100/FF3B30/ffffff?text=SS';">
+                                <div>
+                                    <div class="text-xs font-bold">Simple Studios Group</div>
+                                    <div class="text-[10px] text-slate-400">Join 150K+ Community Members</div>
+                                </div>
+                            </div>
+                            <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-brand-red text-white text-xs font-bold hover:bg-brand-redHover transition-colors">
+                                Join
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT & COMMUNITY SECTION -->
+    <section id="contact" class="py-24 bg-brand-surface border-t border-slate-200/80 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12">
+                
+                <div class="lg:col-span-5 flex flex-col justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-brand-red mb-3 block">Get In Touch</span>
+                        <h2 class="font-heading text-3xl sm:text-4xl font-black text-brand-dark tracking-tight mb-6">
+                            Contact Simple Studios
+                        </h2>
+                        <p class="text-brand-slate text-base leading-relaxed mb-8">
+                            Have questions, feedback, or development inquiries? Reach out to our core team directly.
+                        </p>
+
+                        <div class="space-y-4 mb-8">
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-200">
+                                <div class="w-10 h-10 rounded-xl bg-brand-redSoft text-brand-red flex items-center justify-center font-bold">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-brand-muted">Official Email</div>
+                                    <div class="text-sm font-bold text-brand-dark">contact@simplestudios.com</div>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-200">
+                                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                                    <i class="fa-brands fa-discord"></i>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-brand-muted">Community Discord</div>
+                                    <div class="text-sm font-bold text-brand-dark">discord.gg/simplestudios</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white border border-slate-200 flex items-center gap-4">
+                        <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793193279/images_1.png" 
+                             alt="Simple Studios Verified" 
+                             class="w-12 h-12 rounded-xl object-cover bg-brand-surface p-1 border border-slate-200"
+                             onerror="this.onerror=null; this.src='https://placehold.co/100x100/FF3B30/ffffff?text=SS';">
+                        <div>
+                            <div class="text-sm font-extrabold text-brand-dark">Simple Studios</div>
+                            <div class="text-xs text-emerald-600 font-semibold">Verified Roblox Creator Group</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form Simulation -->
+                <div class="lg:col-span-7">
+                    <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-soft-xl">
+                        <form id="contact-form" class="space-y-6">
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Your Name / Roblox Username</label>
+                                    <input type="text" required placeholder="e.g. RobloxDev_2026" class="w-full px-4 py-3 rounded-xl bg-brand-surface border border-slate-200 text-brand-dark placeholder-slate-400 focus:outline-none focus:border-brand-red focus:bg-white transition-all text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Your Email Address</label>
+                                    <input type="email" required placeholder="name@domain.com" class="w-full px-4 py-3 rounded-xl bg-brand-surface border border-slate-200 text-brand-dark placeholder-slate-400 focus:outline-none focus:border-brand-red focus:bg-white transition-all text-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Subject</label>
+                                <input type="text" required placeholder="e.g. Studio Inquiry / General Question" class="w-full px-4 py-3 rounded-xl bg-brand-surface border border-slate-200 text-brand-dark placeholder-slate-400 focus:outline-none focus:border-brand-red focus:bg-white transition-all text-sm">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-brand-dark uppercase tracking-wider mb-2">Your Message</label>
+                                <textarea rows="4" required placeholder="Type your message here..." class="w-full px-4 py-3 rounded-xl bg-brand-surface border border-slate-200 text-brand-dark placeholder-slate-400 focus:outline-none focus:border-brand-red focus:bg-white transition-all text-sm"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-red text-white font-extrabold text-base shadow-glow-red hover:opacity-95 transition-all active:scale-[0.99] flex items-center justify-center gap-2">
+                                <span>Send Message</span>
+                                <i class="fa-solid fa-paper-plane text-sm"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-brand-dark text-white pt-16 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
+                
+                <div class="md:col-span-6 space-y-4">
+                    <a href="#" class="flex items-center gap-3">
+                        <img src="https://res.cloudinary.com/pwycpc3m/image/upload/v1793193279/images_1.png" 
+                             alt="Simple Studios Footer Logo" 
+                             class="w-10 h-10 rounded-xl object-cover bg-white p-0.5 border border-slate-700"
+                             onerror="this.onerror=null; this.src='https://placehold.co/100x100/FF3B30/ffffff?text=SS';">
+                        <span class="font-heading font-extrabold text-2xl text-white">
+                            SIMPLE <span class="text-brand-red">STUDIOS</span>
+                        </span>
+                    </a>
+                    <p class="text-slate-400 text-sm max-w-md leading-relaxed">
+                        An independent studio dedicated to crafting high-quality virtual experiences and innovation on the Roblox platform.
+                    </p>
+                </div>
+
+                <div class="md:col-span-3 space-y-3">
+                    <h5 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Navigation</h5>
+                    <ul class="space-y-2 text-sm text-slate-400">
+                        <li><a href="#about" class="hover:text-brand-red transition-colors">About Us</a></li>
+                        <li><a href="#games" class="hover:text-brand-red transition-colors">Popular Games</a></li>
+                        <li><a href="#capabilities" class="hover:text-brand-red transition-colors">Capabilities</a></li>
+                        <li><a href="#journey" class="hover:text-brand-red transition-colors">Our Journey</a></li>
+                        <li><a href="#why-us" class="hover:text-brand-red transition-colors">Why Simple</a></li>
+                        <li><a href="#contact" class="hover:text-brand-red transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-3 space-y-3">
+                    <h5 class="font-heading font-bold text-sm text-white uppercase tracking-wider">Social Channels</h5>
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="https://www.roblox.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center hover:bg-brand-red transition-all" title="Roblox Group">
+                            <i class="fa-solid fa-cube text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center hover:bg-brand-red transition-all" title="Discord">
+                            <i class="fa-brands fa-discord text-lg"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-xl bg-slate-800 text-white flex items-center justify-center hover:bg-brand-red transition-all" title="Twitter / X">
+                            <i class="fa-brands fa-x-twitter text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© 2026 Simple Studios. All rights reserved. Simple Studios is an independent studio creating content on the Roblox platform. Not directly affiliated with Roblox Corporation.</p>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-slate-400 transition-colors">Terms of Use</a>
+                    <a href="#" class="hover:text-slate-400 transition-colors">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- FLOATING ACTION BUTTON LINKING DIRECTLY TO ROBLOX -->
+    <div class="fixed bottom-6 right-6 z-50 flex items-center group">
+        
+        <span class="mr-3 px-3.5 py-2 rounded-xl bg-brand-dark text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-2xl whitespace-nowrap hidden sm:inline-block transform translate-x-2 group-hover:translate-x-0 border border-slate-700">
+            🔴 Join Roblox Group
+        </span>
+
+        <a href="https://www.roblox.com" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           aria-label="Visit Roblox Page"
+           class="w-16 h-16 rounded-2xl bg-gradient-red text-white flex items-center justify-center shadow-glow-red roblox-btn-wrapper border border-white/40 relative overflow-hidden">
+            
+            <span class="absolute inset-0 rounded-2xl bg-white/30 animate-pulse-ring pointer-events-none"></span>
+            
+            <div class="relative z-10 flex flex-col items-center justify-center gap-0.5 roblox-icon-spin">
+                <!-- Official Roblox Tilted Square SVG Logo -->
+                <svg class="w-7 h-7 fill-current text-white drop-shadow-md" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.164 0L0 18.836 18.836 24 24 5.164 5.164 0zm8.397 14.329l-3.89-1.042 1.042-3.89 3.89 1.042-1.042 3.89z"/>
+                </svg>
+                <span class="text-[8px] font-black uppercase tracking-tighter drop-shadow-sm">ROBLOX</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-24 right-6 z-50 toast-enter opacity-0 pointer-events-none">
+        <div class="bg-brand-dark text-white rounded-2xl p-4 shadow-2xl flex items-center gap-3 max-w-sm border border-brand-red">
+            <div class="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center shrink-0">
+                <i class="fa-solid fa-check text-sm"></i>
+            </div>
+            <div>
+                <h6 class="text-sm font-bold">Message Delivered!</h6>
+                <p class="text-xs text-slate-300">Thank you for reaching out to Simple Studios.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Contact Form Submission Notification Simulation
+        const contactForm = document.getElementById('contact-form');
+        const toast = document.getElementById('toast');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            toast.classList.remove('opacity-0', 'pointer-events-none', 'toast-enter');
+            toast.classList.add('toast-show');
+
+            contactForm.reset();
+
+            setTimeout(() => {
+                toast.classList.remove('toast-show');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 4000);
+        });
+
+        // Number Counter Animation
+        const counters = document.querySelectorAll('.count-up');
+        let animated = false;
+
+        function startCounters() {
+            const scrollPos = window.scrollY + window.innerHeight;
+            const targetEl = document.querySelector('.count-up');
+            if(!targetEl) return;
+            
+            const statsSection = targetEl.getBoundingClientRect().top + window.scrollY;
+
+            if (scrollPos > statsSection && !animated) {
+                animated = true;
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target');
+                    const speed = 30;
+                    let count = 0;
+
+                    const update = () => {
+                        const increment = Math.ceil(target / speed);
+                        count += increment;
+
+                        if (count < target) {
+                            counter.innerText = count;
+                            setTimeout(update, 35);
+                        } else {
+                            counter.innerText = target;
+                        }
+                    };
+
+                    update();
+                });
+            }
+        }
+
+        window.addEventListener('scroll', startCounters);
+        window.addEventListener('load', startCounters);
+    </script>
+</body>
+</html>
